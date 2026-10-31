@@ -103,3 +103,4 @@ def test_arrival_weekend_open():
     """Weekend adds 10 to cutoff; still 'open'."""
     # not colour, weekend => cutoff = 5+10 = 15; 15 >= 15
     assert arrival_status(15, False, True) == "open"
+
