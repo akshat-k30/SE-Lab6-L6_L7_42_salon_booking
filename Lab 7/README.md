@@ -59,3 +59,4 @@ pytest test_salon_booking.py -v
 # Run the fixed version
 python salon_booking.py
 ```
+

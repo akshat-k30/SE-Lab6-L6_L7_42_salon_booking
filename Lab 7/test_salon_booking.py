@@ -74,3 +74,4 @@ def test_payable_bill_no_crash(s):
         assert False, f"payable_bill crashed with TypeError on input: {s!r}"
     except Exception as e:
         assert False, f"payable_bill crashed with {type(e).__name__}: {e} on input: {s!r}"
+
