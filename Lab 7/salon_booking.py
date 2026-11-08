@@ -1,8 +1,11 @@
+import math
+
+
 def parse_booking(text):
     """Parse a 'service:duration' string into (service_name, duration_float).
 
     Raises ValueError for any invalid input (None, missing ':', non-numeric
-    duration, empty service name, or negative duration).
+    duration, empty service name, negative duration, or non-finite values).
     """
     if not isinstance(text, str):
         raise ValueError("Input must be a string")
@@ -19,6 +22,8 @@ def parse_booking(text):
         minutes = float(minutes_str)
     except ValueError:
         raise ValueError(f"Duration must be a number, got '{minutes_str}'")
+    if not math.isfinite(minutes):
+        raise ValueError("Duration must be a finite number")
     if minutes < 0:
         raise ValueError("Duration cannot be negative")
     return service.title(), minutes
@@ -27,8 +32,8 @@ def parse_booking(text):
 def duration_average(durations_csv):
     """Compute the integer average of a comma-separated list of integer durations.
 
-    Raises ValueError for None, empty string, non-integer values, or empty
-    elements in the CSV.
+    Raises ValueError for None, empty string, non-integer values, empty
+    elements in the CSV, or negative durations.
     """
     if not isinstance(durations_csv, str):
         raise ValueError("Input must be a string")
@@ -42,9 +47,12 @@ def duration_average(durations_csv):
         if not part:
             raise ValueError("Empty value found in CSV")
         try:
-            values.append(int(part))
+            val = int(part)
         except ValueError:
             raise ValueError(f"Non-integer value found: '{part}'")
+        if val < 0:
+            raise ValueError(f"Duration cannot be negative: {val}")
+        values.append(val)
     if len(values) == 0:
         raise ValueError("No values to average")
     return sum(values) // len(values)
@@ -54,7 +62,8 @@ def payable_bill(text):
     """Compute the payable bill from a 'bill|discount' string.
 
     Returns max(bill * 1.18 - discount, 0).
-    Raises ValueError for None, missing '|', or non-numeric values.
+    Raises ValueError for None, missing '|', non-numeric, non-finite, or
+    negative values.
     """
     if not isinstance(text, str):
         raise ValueError("Input must be a string")
@@ -71,10 +80,14 @@ def payable_bill(text):
         bill = float(bill_str)
     except ValueError:
         raise ValueError(f"Bill must be a number, got '{bill_str}'")
+    if not math.isfinite(bill):
+        raise ValueError("Bill must be a finite number")
     try:
         discount = float(discount_str)
     except ValueError:
         raise ValueError(f"Discount must be a number, got '{discount_str}'")
+    if not math.isfinite(discount):
+        raise ValueError("Discount must be a finite number")
     if bill < 0:
         raise ValueError("Bill cannot be negative")
     if discount < 0:
